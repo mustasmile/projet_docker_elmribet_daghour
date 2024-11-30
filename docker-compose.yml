@@ -1,0 +1,82 @@
+services:
+  node_app:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: node_app
+    environment:
+      MONGO_URI: mongodb://root:example@mongo:27017/medieval_weapons?authSource=admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    networks:
+      - medieval-network
+    restart: always
+
+  php_apache:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    container_name: php_apache
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: feudal_clan
+      DB_USER: postgres
+      DB_PASSWORD: 968527
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+    networks:
+      - medieval-network
+    restart: always
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: medieval_weapons
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - medieval-network
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  postgres:
+    image: postgres:15
+    container_name: test_projet-postgres-1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 968527
+      POSTGRES_DB: feudal_clan
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/
+    networks:
+      - medieval-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  medieval-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  postgres-data:
+    driver: local

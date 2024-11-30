@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add a Medieval Weapon</title>
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background-color: #f5f1e1;
+      margin: 0;
+      padding: 0;
+      color: #3e3e3e;
+      background-image: url('guerre.png');
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      color: #4a2a18;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 30px;
+      font-family: 'UnifrakturMaguntia', cursive;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-container {
+      width: 60%;
+      margin: 40px auto;
+      padding: 30px;
+      background-image: url('parchment-texture.png');
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      font-family: 'Cinzel', serif;
+    }
+
+    .form-container label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+      color: #4a2a18;
+    }
+
+    .form-container input, .form-container textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #6c4f29;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      color: #3e3e3e;
+    }
+
+    .form-container textarea {
+      resize: vertical;
+      height: 120px;
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      color: #fff;
+      background-color: #6c4f29;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-container button:hover {
+      background-color: #4e3821;
+    }
+
+    .form-container input:focus, .form-container textarea:focus {
+      border-color: #8a6b3f;
+      outline: none;
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        width: 90%;
+      }
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #6c4f29;
+      border-radius: 8px;
+      text-decoration: none;
+      text-align: center;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #4e3821;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Add a New Medieval Weapon</h1>
+
+  <div class="form-container">
+    <form id="weapon-form">
+      <label for="name">Weapon Name:</label>
+      <input type="text" id="name" name="name" required><br>
+
+      <label for="type">Weapon Type:</label>
+      <input type="text" id="type" name="type" required><br>
+
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" required></textarea><br>
+
+      <label for="material">Material:</label>
+      <input type="text" id="material" name="material"><br>
+
+      <label for="weight">Weight (grams):</label>
+      <input type="text" id="weight" name="weight"><br>
+
+      <label for="length">Length (cm):</label>
+      <input type="text" id="length" name="length"><br>
+
+      <label for="image">Image (link):</label>
+      <input type="text" id="image" name="image"><br>
+
+      <button type="submit">Add Weapon</button>
+    </form>
+
+    <a href="weapons_database.html" class="back-button">Back to Weapon List</a>
+  </div>
+
+  <script>
+    document.getElementById('weapon-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const weaponData = {
+        name: document.getElementById('name').value,
+        type: document.getElementById('type').value,
+        description: document.getElementById('description').value,
+        characteristics: {
+          material: document.getElementById('material').value,
+          weight: parseFloat(document.getElementById('weight').value),
+          length: parseFloat(document.getElementById('length').value),
+          image: document.getElementById('image').value,
+        }
+      };
+
+      if (!weaponData.name || !weaponData.type || !weaponData.description) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      fetch('/api/weapons', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(weaponData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error adding weapon');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert('Weapon added successfully!');
+        document.getElementById('weapon-form').reset();
+      })
+      .catch(error => {
+        console.error('Error adding weapon:', error);
+        alert("Error adding weapon");
+      });
+    });
+  </script>
+
+</body>
+</html>

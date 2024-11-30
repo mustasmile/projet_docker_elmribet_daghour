@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medieval Weapon List</title>
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background-color: #3e3e3e;
+      padding: 0;
+      margin: 0;
+      color: #fff;
+    }
+
+    .page-header {
+      text-align: center;
+      background-image: url('fond.png');
+      background-size: cover;
+      background-position: center;
+      padding: 80px 20px;
+      color: #fff;
+      position: relative;
+    }
+
+    .page-header h1 {
+      font-size: 72px;
+      font-weight: bold;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7);
+    }
+
+    .weapon-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      width: 100%;
+    }
+
+    .weapon-card {
+      background-color: #1d1d1d;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .weapon-card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
+    }
+
+    .weapon-image {
+      width: 100%;
+      height: 220px;
+      background-color: #444;
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+    }
+
+    .weapon-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .weapon-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #f1c40f;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+    }
+
+    .weapon-type {
+      font-size: 14px;
+      color: #bdc3c7;
+      text-transform: uppercase;
+    }
+
+    .weapon-description {
+      font-size: 14px;
+      color: #ecf0f1;
+    }
+
+    .weapon-price {
+      font-weight: bold;
+      font-size: 16px;
+      color: #e67e22;
+      margin-top: 8px;
+    }
+
+    .add-weapon-btn {
+      display: inline-block;
+      background-color: #6c4f29;
+      color: white;
+      padding: 14px 24px;
+      font-size: 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .add-weapon-btn:hover {
+      background-color: #4e3821;
+      transform: scale(1.1);
+    }
+
+    .add-weapon-btn i {
+      margin-right: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .weapon-list {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .weapon-name {
+        font-size: 16px;
+      }
+
+      .weapon-type,
+      .weapon-description {
+        font-size: 12px;
+      }
+
+      .weapon-price {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Medieval Weapon List</h1>
+  </div>
+
+  <div class="weapon-list" id="weapons-list">
+  </div>
+
+  <a href="page_ajout.html" class="add-weapon-btn">
+    <i class="fa fa-plus"></i> Add a Weapon
+  </a>
+
+  <script>
+    fetch('/api/weapons')
+      .then(response => response.json())
+      .then(data => {
+        const weaponsList = document.getElementById('weapons-list');
+        data.forEach(weapon => {
+          const weaponCard = document.createElement('div');
+          weaponCard.classList.add('weapon-card');
+          
+          weaponCard.innerHTML = `
+            <div class="weapon-image" style="background-image: url('${weapon.image}');"></div>
+            <div class="weapon-body">
+              <div class="weapon-name">
+                <strong>${weapon.name}</strong>
+              </div>
+              <div class="weapon-type">
+                Type: ${weapon.type}
+              </div>
+              <div class="weapon-description">
+                ${weapon.description}
+              </div>
+            </div>
+          `;
+          
+          weaponsList.appendChild(weaponCard);
+        });
+      })
+      .catch(error => console.error('Error loading weapons:', error));
+  </script>
+</body>
+</html>
