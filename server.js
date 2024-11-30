@@ -1,28 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const cors = require('cors');
 const path = require('path');
 const Weapon = require('./models/Weapon');
 
 const app = express();
 const port = 3000;
-
-// Middleware pour parser les requêtes JSON
-app.use(bodyParser.json());
-
-// Servir les fichiers statiques (HTML, CSS, JS) depuis le dossier racine
-app.use(express.static(path.join(__dirname)));
-
-// Connexion à MongoDB avec authentification
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 const mongoUri = process.env.MONGO_URI || 'mongodb://root:example@mongo:27017/medieval_weapons?authSource=admin';
-mongoose.connect(mongoUri, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
+mongoose
+  .connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log('Connecté à MongoDB'))
-  .catch(err => console.error('Erreur de connexion à MongoDB:', err));
+  .catch((err) => console.error('Erreur de connexion à MongoDB:', err));
 
-// Route pour récupérer toutes les armes
+app.get('/', (req, res) => {
+  res.send('Welcome to the Medieval Weapons API');
+});
+
 app.get('/api/weapons', async (req, res) => {
   try {
     const weapons = await Weapon.find();
@@ -33,7 +32,6 @@ app.get('/api/weapons', async (req, res) => {
   }
 });
 
-// Route pour ajouter une nouvelle arme
 app.post('/api/weapons', async (req, res) => {
   const { name, type, description, characteristics } = req.body;
 
@@ -41,7 +39,7 @@ app.post('/api/weapons', async (req, res) => {
     name,
     type,
     description,
-    characteristics
+    characteristics,
   });
 
   try {
@@ -53,7 +51,10 @@ app.post('/api/weapons', async (req, res) => {
   }
 });
 
-// Lancer le serveur
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Route non trouvée' });
+});
+
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);
 });

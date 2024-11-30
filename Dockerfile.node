@@ -1,17 +1,7 @@
-# Utiliser l'image officielle de Node.js
 FROM node:16
-
-# Créer le répertoire de l'application
 WORKDIR /app
-
-# Copier les fichiers du projet dans le conteneur
-COPY . .
-
-# Installer les dépendances
+COPY package*.json ./
 RUN npm install
-
-# Exposer le port
+COPY . .
 EXPOSE 3000
-
-# Lancer l'application
 CMD ["node", "server.js"]

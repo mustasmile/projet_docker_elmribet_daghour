@@ -1,15 +1,14 @@
 {
-  "name": "medieval-weapons",
+  "name": "medieval-weapons-api",
   "version": "1.0.0",
+  "description": "API for medieval weapons",
   "main": "server.js",
-  "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^6.10.0",
-    "body-parser": "^1.20.1"
-  },
   "scripts": {
     "start": "node server.js"
   },
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.10.0",
+    "cors": "^2.8.5"
+  }
 }

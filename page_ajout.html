@@ -173,27 +173,32 @@
         return;
       }
 
-      fetch('/api/weapons', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(weaponData)
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Error adding weapon');
-        }
-        return response.json();
-      })
-      .then(data => {
-        alert('Weapon added successfully!');
-        document.getElementById('weapon-form').reset();
-      })
-      .catch(error => {
-        console.error('Error adding weapon:', error);
-        alert("Error adding weapon");
-      });
+      fetch('http://localhost:3000/api/weapons', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(weaponData),
+})
+
+.then(response => {
+  console.log('Response status:', response.status);
+  console.log('Response body:', response);
+  if (!response.ok) {
+    throw new Error('Error adding weapon');
+  }
+  return response.json();
+})
+.then(data => {
+  alert('Weapon added successfully!');
+  document.getElementById('weapon-form').reset();
+})
+.catch(error => {
+  console.error('Error adding weapon:', error);
+  alert("Error adding weapon");
+});
+
+  
     });
   </script>
 

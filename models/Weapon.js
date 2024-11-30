@@ -3,22 +3,32 @@ const mongoose = require('mongoose');
 const weaponSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   type: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   characteristics: {
-    material: String,
-    weight: Number,
-    length: Number,
-    image : String
-  }
+    material: {
+      type: String,
+    },
+    weight: {
+      type: Number,
+    },
+    length: {
+      type: Number,
+    },
+    image: {
+      type: String,
+    },
+  },
 });
 
-module.exports = mongoose.model('Weapon', weaponSchema);
+const Weapon = mongoose.model('Weapon', weaponSchema);
+
+module.exports = Weapon;

@@ -40,8 +40,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
       MONGO_INITDB_DATABASE: medieval_weapons
-    ports:
-      - "27017:27017"
     volumes:
       - mongo-data:/data/db
     networks:
@@ -52,6 +50,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+    restart: always
 
   postgres:
     image: postgres:15
@@ -62,15 +61,15 @@ services:
       POSTGRES_DB: feudal_clan
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - medieval-network
-    restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: always
 
 networks:
   medieval-network:
@@ -78,5 +77,6 @@ networks:
 
 volumes:
   mongo-data:
+    driver: local
   postgres-data:
     driver: local

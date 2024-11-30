@@ -15,7 +15,6 @@
       color: #333;
     }
 
-    /* Header */
     .page-header {
       text-align: center;
       background-image: url('fond.png');
@@ -58,7 +57,6 @@
       background-color: #1f1f1f;
       margin-top: 20px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-      transition: all 0.3s ease;
     }
 
     .button-item {
@@ -111,15 +109,15 @@
     .weapon-image {
       width: 100%;
       height: 220px;
-      background-color: #444;
-      background-size: cover;
-      background-position: center;
+      overflow: hidden;
       border-radius: 12px;
-      transition: opacity 0.3s ease;
+      background-color: #444;
     }
 
-    .weapon-image:hover {
-      opacity: 0.9;
+    .weapon-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .weapon-body {
@@ -177,10 +175,6 @@
       .weapon-description {
         font-size: 12px;
       }
-
-      .weapon-price {
-        font-size: 14px;
-      }
     }
   </style>
 </head>
@@ -189,7 +183,6 @@
     <h1>Medieval Weapon List</h1>
   </div>
 
-  <!-- Bandeau avec les boutons de navigation -->
   <div class="button-banner">
     <a href="index.php" class="button-item">
       <i class="fa fa-home"></i> Home
@@ -199,41 +192,45 @@
     </a>
   </div>
 
-  <!-- Liste des armes -->
   <div class="weapon-list-container">
-    <div class="weapon-list" id="weapons-list">
-      <!-- Liste des armes sera générée ici -->
-    </div>
+    <div class="weapon-list" id="weapons-list"></div>
   </div>
 
   <script>
-    fetch('/api/weapons')
-      .then(response => response.json())
+    fetch('http://localhost:3000/api/weapons')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
         const weaponsList = document.getElementById('weapons-list');
-        data.forEach(weapon => {
-          const weaponCard = document.createElement('div');
-          weaponCard.classList.add('weapon-card');
-          
-          weaponCard.innerHTML = `
-            <div class="weapon-image" style="background-image: url('${weapon.image}');"></div>
-            <div class="weapon-body">
-              <div class="weapon-name">
-                <strong>${weapon.name}</strong>
+        if (!data || data.length === 0) {
+          weaponsList.innerHTML = '<p>No weapons found.</p>';
+        } else {
+          data.forEach(weapon => {
+            const weaponCard = document.createElement('div');
+            weaponCard.classList.add('weapon-card');
+            weaponCard.innerHTML = `
+              <div class="weapon-image">
+                <img src="${weapon.characteristics?.image || 'default-image.png'}" alt="${weapon.name}">
               </div>
-              <div class="weapon-type">
-                Type: ${weapon.type}
+              <div class="weapon-body">
+                <div class="weapon-name">${weapon.name}</div>
+                <div class="weapon-type">Type: ${weapon.type}</div>
+                <div class="weapon-description">${weapon.description}</div>
               </div>
-              <div class="weapon-description">
-                ${weapon.description}
-              </div>
-            </div>
-          `;
-          
-          weaponsList.appendChild(weaponCard);
-        });
+            `;
+            weaponsList.appendChild(weaponCard);
+          });
+        }
       })
-      .catch(error => console.error('Error loading weapons:', error));
+      .catch(error => {
+        console.error('Error loading weapons:', error);
+        const weaponsList = document.getElementById('weapons-list');
+        weaponsList.innerHTML = `<p>Error loading weapons: ${error.message}</p>`;
+      });
   </script>
 </body>
 </html>
