@@ -9,22 +9,22 @@
   <style>
     body {
       font-family: 'Lato', sans-serif;
-      background-color: #2a2a2a;
-      color: #f4f4f9;
+      background-color: #3e2e20;
       margin: 0;
       padding: 0;
+      color: #f4f4f9;
     }
 
     .page-header {
       text-align: center;
-      background-image: url('fond.png');
+      background-image: url('medieval_shop.png');
       background-size: cover;
       background-position: center;
       padding: 100px 20px;
       margin: 0;
       color: #fff;
       position: relative;
-      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.6);
     }
 
     .page-header h1 {
@@ -33,36 +33,25 @@
       color: #f1c40f;
       text-transform: uppercase;
       letter-spacing: 5px;
-      text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.6);
+      text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
       margin: 0;
-    }
-
-    .page-header::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 0;
     }
 
     .button-banner {
       display: flex;
       justify-content: center;
       gap: 20px;
-      padding: 8px 0;
+      padding: 12px 0;
       width: 100%;
-      background-color: #3e3e3e;
+      background-color: #5c3a24;
       margin-top: 20px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
     }
 
     .button-item {
-      font-size: 16px;
+      font-size: 18px;
       padding: 12px 24px;
-      background-color: #6c4f29;
+      background-color: #7f5525;
       color: white;
       border-radius: 30px;
       cursor: pointer;
@@ -70,19 +59,38 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       border: 2px solid #f1c40f;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .button-item:hover {
-      background-color: #4e3821;
+      background-color: #5a3e1a;
       transform: scale(1.05);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
     }
 
-    .button-item i {
-      margin-right: 8px;
+    .search-bar-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .search-bar {
+      width: 80%;
+      max-width: 500px;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: 2px solid #7f5525;
+      border-radius: 30px;
+      outline: none;
+      background-color: #f1e4c5;
+      color: #333;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-bar:focus {
+      border-color: #f1c40f;
     }
 
     .weapon-list {
@@ -94,88 +102,80 @@
     }
 
     .weapon-card {
-      background-color: #2d2d2d;
+      background-color: #5c3a24;
       border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
       padding: 20px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       height: 100%;
+      cursor: pointer;
     }
 
     .weapon-card:hover {
-      transform: translateY(-15px);
+      transform: translateY(-10px);
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
     }
 
     .weapon-image {
       width: 100%;
-      height: 220px;
-      overflow: hidden;
+      height: 200px;
+      background-color: #f4f4f9;
+      background-size: cover;
+      background-position: center;
       border-radius: 12px;
-      background-color: #444;
+      border: 2px solid #7f5525;
     }
 
-    .weapon-image img {
+    .weapon-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
 
-    .weapon-body {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 16px;
+    .weapon-popup-content {
+      background: #5c3a24;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      color: #f4f4f9;
+      animation: fadeIn 0.5s ease-in-out;
     }
 
-    .weapon-name {
-      font-size: 24px;
-      font-weight: bold;
-      color: #f1c40f;
-      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
-    }
-
-    .weapon-type {
-      font-size: 14px;
-      color: #bdc3c7;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .weapon-description {
-      font-size: 14px;
-      color: #ecf0f1;
-      line-height: 1.5;
-    }
-
-    .weapon-list-container {
-      margin-top: 50px;
-    }
-
-    @media (max-width: 768px) {
-      .button-banner {
-        flex-direction: column;
-        gap: 15px;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
       }
-
-      .weapon-list {
-        padding: 20px;
-      }
-
-      .weapon-card {
-        padding: 16px;
+      to {
+        opacity: 1;
+        transform: scale(1);
       }
     }
 
-    @media (max-width: 480px) {
-      .weapon-name {
-        font-size: 18px;
-      }
+    .popup-close {
+      background: #7f5525;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
 
-      .weapon-type,
-      .weapon-description {
-        font-size: 12px;
-      }
+    .popup-close:hover {
+      background: #5a3e1a;
     }
   </style>
 </head>
@@ -193,45 +193,78 @@
     </a>
   </div>
 
+  <div class="search-bar-container">
+    <input type="text" id="search-bar" class="search-bar" placeholder="Search weapons...">
+  </div>
+
   <div class="weapon-list-container">
     <div class="weapon-list" id="weapons-list"></div>
   </div>
 
+  <!-- Popup -->
+  <div class="weapon-popup" id="weapon-popup">
+    <div class="weapon-popup-content">
+      <h2 id="popup-name"></h2>
+      <p id="popup-type"></p>
+      <p id="popup-description"></p>
+      <p id="popup-material"></p>
+      <p id="popup-weight"></p>
+      <p id="popup-length"></p>
+      <button class="popup-close" onclick="closePopup()">Close</button>
+    </div>
+  </div>
+
   <script>
+    let weaponsData = [];
+
     fetch('http://localhost:3000/api/weapons')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => {
-        const weaponsList = document.getElementById('weapons-list');
-        if (!data || data.length === 0) {
-          weaponsList.innerHTML = '<p>No weapons found.</p>';
-        } else {
-          data.forEach(weapon => {
-            const weaponCard = document.createElement('div');
-            weaponCard.classList.add('weapon-card');
-            weaponCard.innerHTML = `
-              <div class="weapon-image">
-                <img src="${weapon.characteristics?.image || 'weapon_default.png'}" alt="${weapon.name}">
-              </div>
-              <div class="weapon-body">
-                <div class="weapon-name">${weapon.name}</div>
-                <div class="weapon-type">Type: ${weapon.type}</div>
-                <div class="weapon-description">${weapon.description}</div>
-              </div>
-            `;
-            weaponsList.appendChild(weaponCard);
-          });
-        }
-      })
-      .catch(error => {
-        console.error('Error loading weapons:', error);
-        const weaponsList = document.getElementById('weapons-list');
-        weaponsList.innerHTML = `<p>Error loading weapons: ${error.message}</p>`;
+        weaponsData = data;
+        displayWeapons(data);
       });
+
+    function displayWeapons(data) {
+      const weaponsList = document.getElementById('weapons-list');
+      weaponsList.innerHTML = '';
+      data.forEach(weapon => {
+        const weaponCard = document.createElement('div');
+        weaponCard.classList.add('weapon-card');
+        weaponCard.innerHTML = `
+          <div class="weapon-image" style="background-image: url('${weapon.characteristics?.image || 'default-image.png'}');"></div>
+          <div class="weapon-body">
+            <div class="weapon-name">${weapon.name}</div>
+          </div>
+        `;
+        weaponCard.addEventListener('click', () => showPopup(weapon));
+        weaponsList.appendChild(weaponCard);
+      });
+    }
+
+    function showPopup(weapon) {
+      document.getElementById('popup-name').innerText = weapon.name;
+      document.getElementById('popup-type').innerText = `Type: ${weapon.type}`;
+      document.getElementById('popup-description').innerText = weapon.description;
+      document.getElementById('popup-material').innerText = `Material: ${weapon.characteristics.material}`;
+      document.getElementById('popup-weight').innerText = `Weight: ${weapon.characteristics.weight} kg`;
+      document.getElementById('popup-length').innerText = `Length: ${weapon.characteristics.length} cm`;
+      document.getElementById('weapon-popup').style.display = 'flex';
+    }
+
+    function closePopup() {
+      document.getElementById('weapon-popup').style.display = 'none';
+    }
+
+    // Filtre de recherche
+    document.getElementById('search-bar').addEventListener('input', (event) => {
+      const searchTerm = event.target.value.toLowerCase();
+      const filteredWeapons = weaponsData.filter(weapon =>
+        weapon.name.toLowerCase().includes(searchTerm) ||
+        weapon.type.toLowerCase().includes(searchTerm) ||
+        weapon.description.toLowerCase().includes(searchTerm)
+      );
+      displayWeapons(filteredWeapons);
+    });
   </script>
 </body>
 </html>
