@@ -6,9 +6,11 @@ const Weapon = require('./models/Weapon');
 
 const app = express();
 const port = 3000;
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
 const mongoUri = process.env.MONGO_URI || 'mongodb://root:example@mongo:27017/medieval_weapons?authSource=admin';
 mongoose
   .connect(mongoUri, {
