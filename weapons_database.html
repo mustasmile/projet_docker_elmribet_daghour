@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Medieval Weapon List</title>
+  <title>Medieval Weapon Database</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <style>
+    /* Global Styles */
     body {
       font-family: 'Lato', sans-serif;
       background-color: #3e2e20;
@@ -15,6 +16,7 @@
       color: #f4f4f9;
     }
 
+    /* Header */
     .page-header {
       text-align: center;
       background-image: url('medieval_shop.png');
@@ -37,6 +39,7 @@
       margin: 0;
     }
 
+    /* Buttons */
     .button-banner {
       display: flex;
       justify-content: center;
@@ -70,6 +73,7 @@
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
     }
 
+    /* Search Bar */
     .search-bar-container {
       display: flex;
       justify-content: center;
@@ -93,6 +97,7 @@
       border-color: #f1c40f;
     }
 
+    /* Weapon Cards */
     .weapon-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -102,6 +107,7 @@
     }
 
     .weapon-card {
+      position: relative;
       background-color: #5c3a24;
       border-radius: 16px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
@@ -126,7 +132,31 @@
       border: 2px solid #7f5525;
     }
 
-    .weapon-popup {
+    /* Action Icons */
+    .action-icons {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-icons i {
+      cursor: pointer;
+      font-size: 18px;
+      background: #7f5525;
+      padding: 8px;
+      border-radius: 50%;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .action-icons i:hover {
+      background: #5a3e1a;
+    }
+
+    /* Popup Styles */
+    .popup {
       position: fixed;
       top: 0;
       left: 0;
@@ -139,49 +169,47 @@
       z-index: 1000;
     }
 
-    .weapon-popup-content {
+    .popup-content {
       background: #5c3a24;
       padding: 20px;
       border-radius: 12px;
       max-width: 500px;
       width: 90%;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-      text-align: center;
       color: #f4f4f9;
-      animation: fadeIn 0.5s ease-in-out;
+      text-align: center;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    .popup-content h2 {
+      margin-top: 0;
     }
 
-    .popup-close {
-      background: #7f5525;
+    .popup-content input,
+    .popup-content textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
       border: none;
-      color: white;
+    }
+
+    .popup-content button {
       padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 20px;
+      background: #7f5525;
+      color: white;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
-      border-radius: 8px;
       transition: background-color 0.3s ease;
     }
 
-    .popup-close:hover {
+    .popup-content button:hover {
       background: #5a3e1a;
     }
   </style>
 </head>
 <body>
   <div class="page-header">
-    <h1>Medieval Weapon List</h1>
+    <h1>Medieval Weapon Database</h1>
   </div>
 
   <div class="button-banner">
@@ -201,22 +229,41 @@
     <div class="weapon-list" id="weapons-list"></div>
   </div>
 
-  <!-- Popup -->
-  <div class="weapon-popup" id="weapon-popup">
-    <div class="weapon-popup-content">
-      <h2 id="popup-name"></h2>
-      <p id="popup-type"></p>
-      <p id="popup-description"></p>
-      <p id="popup-material"></p>
-      <p id="popup-weight"></p>
-      <p id="popup-length"></p>
-      <button class="popup-close" onclick="closePopup()">Close</button>
+  <!-- Popup for Details -->
+  <div class="popup" id="detail-popup">
+    <div class="popup-content">
+      <h2 id="detail-name"></h2>
+      <p id="detail-type"></p>
+      <p id="detail-description"></p>
+      <p id="detail-material"></p>
+      <p id="detail-weight"></p>
+      <p id="detail-length"></p>
+      <button class="popup-close" onclick="closeDetailPopup()">Close</button>
+    </div>
+  </div>
+
+  <!-- Popup for Edit -->
+  <div class="popup" id="edit-popup">
+    <div class="popup-content">
+      <h2>Edit Weapon</h2>
+      <form id="edit-form">
+        <input type="text" id="edit-name" placeholder="Weapon Name" required>
+        <input type="text" id="edit-type" placeholder="Weapon Type" required>
+        <textarea id="edit-description" placeholder="Description" required></textarea>
+        <input type="text" id="edit-material" placeholder="Material">
+        <input type="number" id="edit-weight" placeholder="Weight (kg)">
+        <input type="number" id="edit-length" placeholder="Length (cm)">
+        <button type="submit">Save Changes</button>
+      </form>
+      <button onclick="closeEditPopup()">Cancel</button>
     </div>
   </div>
 
   <script>
     let weaponsData = [];
+    let editingWeaponId = null;
 
+    
     fetch('http://localhost:3000/api/weapons')
       .then(response => response.json())
       .then(data => {
@@ -227,41 +274,111 @@
     function displayWeapons(data) {
       const weaponsList = document.getElementById('weapons-list');
       weaponsList.innerHTML = '';
+
       data.forEach(weapon => {
         const weaponCard = document.createElement('div');
         weaponCard.classList.add('weapon-card');
         weaponCard.innerHTML = `
-          <div class="weapon-image" style="background-image: url('${weapon.characteristics?.image || 'default-image.png'}');"></div>
+          <div class="weapon-image" style="background-image: url('${weapon.characteristics?.image || 'weapon_default.png'}');"></div>
           <div class="weapon-body">
             <div class="weapon-name">${weapon.name}</div>
           </div>
+          <div class="action-icons">
+            <i class="fa fa-trash" onclick="deleteWeapon('${weapon._id}')"></i>
+            <i class="fa fa-edit" onclick="openEditPopup('${weapon._id}')"></i>
+          </div>
         `;
-        weaponCard.addEventListener('click', () => showPopup(weapon));
+        weaponCard.addEventListener('click', (e) => {
+          if (e.target.tagName === 'I') return;
+          showDetailPopup(weapon);
+        });
         weaponsList.appendChild(weaponCard);
       });
     }
 
-    function showPopup(weapon) {
-      document.getElementById('popup-name').innerText = weapon.name;
-      document.getElementById('popup-type').innerText = `Type: ${weapon.type}`;
-      document.getElementById('popup-description').innerText = weapon.description;
-      document.getElementById('popup-material').innerText = `Material: ${weapon.characteristics.material}`;
-      document.getElementById('popup-weight').innerText = `Weight: ${weapon.characteristics.weight} kg`;
-      document.getElementById('popup-length').innerText = `Length: ${weapon.characteristics.length} cm`;
-      document.getElementById('weapon-popup').style.display = 'flex';
+    function deleteWeapon(id) {
+      if (!confirm("Are you sure you want to delete this weapon?")) return;
+
+      fetch(`http://localhost:3000/api/weapons/${id}`, {
+        method: 'DELETE',
+      })
+        .then(response => response.json())
+        .then(() => {
+          weaponsData = weaponsData.filter(w => w._id !== id);
+          displayWeapons(weaponsData);
+          alert("Weapon deleted.");
+        });
     }
 
-    function closePopup() {
-      document.getElementById('weapon-popup').style.display = 'none';
+    function openEditPopup(id) {
+      const weapon = weaponsData.find(w => w._id === id);
+      editingWeaponId = id;
+      document.getElementById('edit-name').value = weapon.name;
+      document.getElementById('edit-type').value = weapon.type;
+      document.getElementById('edit-description').value = weapon.description;
+      document.getElementById('edit-material').value = weapon.characteristics.material || '';
+      document.getElementById('edit-weight').value = weapon.characteristics.weight || '';
+      document.getElementById('edit-length').value = weapon.characteristics.length || '';
+
+      document.getElementById('edit-popup').style.display = 'flex';
     }
 
-    // Filtre de recherche
-    document.getElementById('search-bar').addEventListener('input', (event) => {
-      const searchTerm = event.target.value.toLowerCase();
-      const filteredWeapons = weaponsData.filter(weapon =>
-        weapon.name.toLowerCase().includes(searchTerm) ||
-        weapon.type.toLowerCase().includes(searchTerm) ||
-        weapon.description.toLowerCase().includes(searchTerm)
+    function closeEditPopup() {
+      document.getElementById('edit-popup').style.display = 'none';
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const weapon = weaponsData.find(w => w._id === editingWeaponId);
+      const updatedWeapon = {
+        name: document.getElementById('edit-name').value,
+        type: document.getElementById('edit-type').value,
+        description: document.getElementById('edit-description').value,
+        characteristics: {
+          material: document.getElementById('edit-material').value,
+          weight: parseFloat(document.getElementById('edit-weight').value),
+          length: parseFloat(document.getElementById('edit-length').value),
+          image: weapon.characteristics.image
+        }
+      };
+      fetch(`http://localhost:3000/api/weapons/${editingWeaponId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedWeapon),
+      })
+        .then(response => response.json())
+        .then(updatedWeapon => {
+          weaponsData = weaponsData.map(w => w._id === editingWeaponId ? updatedWeapon : w);
+          displayWeapons(weaponsData);
+          console.log(weaponsData);
+          closeEditPopup();
+          alert("Weapon updated.");
+        });
+    });
+
+    function showDetailPopup(weapon) {
+      document.getElementById('detail-name').innerText = weapon.name;
+      document.getElementById('detail-type').innerText = `Type: ${weapon.type}`;
+      document.getElementById('detail-description').innerText = weapon.description;
+      document.getElementById('detail-material').innerText = `Material: ${weapon.characteristics.material || 'N/A'}`;
+      document.getElementById('detail-weight').innerText = `Weight: ${weapon.characteristics.weight || 'N/A'} kg`;
+      document.getElementById('detail-length').innerText = `Length: ${weapon.characteristics.length || 'N/A'} cm`;
+
+      document.getElementById('detail-popup').style.display = 'flex';
+    }
+
+    function closeDetailPopup() {
+      document.getElementById('detail-popup').style.display = 'none';
+    }
+
+    document.getElementById('search-bar').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredWeapons = weaponsData.filter(w =>
+        w.name.toLowerCase().includes(searchTerm) ||
+        w.type.toLowerCase().includes(searchTerm) ||
+        w.description.toLowerCase().includes(searchTerm)
       );
       displayWeapons(filteredWeapons);
     });
